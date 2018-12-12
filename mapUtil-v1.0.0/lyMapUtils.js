@@ -41,10 +41,10 @@
     //计算中心点
     lyMapUtils.getCenter = function (points) {
         var centerPoint = {};
-        var extremeLatLon = lyMapUtils.getExtremeLatLon(points);
-        if (extremeLatLon) {
-            centerPoint.lon = (parseFloat(extremeLatLon.maxLon) + parseFloat(extremeLatLon.minLon)) / 2;
-            centerPoint.lat = (parseFloat(extremeLatLon.maxLat) + parseFloat(extremeLatLon.minLat)) / 2;
+        var extremeLatLng = lyMapUtils.getExtremeLatLng(points);
+        if (extremeLatLng) {
+            centerPoint.lng = (parseFloat(extremeLatLng.maxLng) + parseFloat(extremeLatLng.minLng)) / 2;
+            centerPoint.lat = (parseFloat(extremeLatLng.maxLat) + parseFloat(extremeLatLng.minLat)) / 2;
             return centerPoint;
         } else {
             return false;
@@ -57,9 +57,9 @@
         var zoom = ["50", "100", "200", "500", "1000", "2000", "5000", "10000", "20000", "25000", "50000", "100000", "200000", "500000", "1000000", "2000000"]
 
         //极值对象
-        var extremeLatLon = lyMapUtils.getExtremeLatLon(points);
-        if (extremeLatLon) {
-            var distance = lyMapUtils.getDistance(extremeLatLon.maxLon, extremeLatLon.maxLat, extremeLatLon.minLon, extremeLatLon.minLat);
+        var extremeLatLng = lyMapUtils.getExtremeLatLng(points);
+        if (extremeLatLng) {
+            var distance = lyMapUtils.getDistance(extremeLatLng.maxLng, extremeLatLng.maxLat, extremeLatLng.minLng, extremeLatLng.minLat);
             if (distance) {
                 if(distance===0){
                     return lyMapUtils.DEFAULT_ZOOM;
@@ -80,9 +80,9 @@
     }
 
     //计算坐标极点
-    lyMapUtils.getExtremeLatLon = function (points) {
+    lyMapUtils.getExtremeLatLng = function (points) {
         //定义返回极值对象
-        var extremeLatLon = {},
+        var extremeLatLng = {},
             pointsLength = points.length;
 
         //如果数组为空返回false
@@ -91,51 +91,51 @@
             return false;
         }
         //极值变量
-        var maxLon = points[0].lon,
-            minLon = points[0].lon,
+        var maxLon = points[0].lng,
+            minLon = points[0].lng,
             maxLat = points[0].lat,
             minLat = points[0].lat;
         //每个坐标点变量
         var point;
         for (var i = 0; i < pointsLength; i++) {
             point = points[i];
-            if (point.lon > maxLon) maxLon = point.lon;
-            if (point.lon < minLon) minLon = point.lon;
+            if (point.lng > maxLon) maxLon = point.lng;
+            if (point.lng < minLon) minLon = point.lng;
             if (point.lat > maxLat) maxLat = point.lat;
             if (point.lat < minLat) minLat = point.lat;
         }
         //给极值对象赋值
-        extremeLatLon.maxLon = maxLon;
-        extremeLatLon.minLon = minLon;
-        extremeLatLon.maxLat = maxLat;
-        extremeLatLon.minLat = minLat;
+        extremeLatLng.maxLng = maxLon;
+        extremeLatLng.minLng = minLon;
+        extremeLatLng.maxLat = maxLat;
+        extremeLatLng.minLat = minLat;
         //返回极值对象
-        return extremeLatLon;
+        return extremeLatLng;
     }
 
     // 计算两点距离
-    lyMapUtils.getDistance = function (lonA, latA, lonB, latB) {
-        if (isNaN(lonA) || isNaN(latA) || isNaN(lonB) || isNaN(latB)) {
+    lyMapUtils.getDistance = function (lngA, latA, lngB, latB) {
+        if (isNaN(lngA) || isNaN(latA) || isNaN(lngB) || isNaN(latB)) {
             console.log('两个点坐标不是数字');
             return false;
         }
         //两点经度-弧度值
-        var radLonA = lyMapUtils.degree2radian(lonA);
-        var radLonB = lyMapUtils.degree2radian(lonB);
+        var radLngA = lyMapUtils.degree2radian(lngA);
+        var radLngB = lyMapUtils.degree2radian(lngB);
         //两点纬度-弧度值
         var radLatA = lyMapUtils.degree2radian(latA);
         var radLatB = lyMapUtils.degree2radian(latB);
         //两点经度之差
-        var lonDistanse = radLonA - radLonB;
+        var lngDistanse = radLngA - radLngB;
         //两点纬度之差
         var latDistanse = radLatA - radLatB;
         //经度差的正弦值
-        var sinLonDis = Math.sin(lonDistanse / 2.0);
+        var sinLngDis = Math.sin(lngDistanse / 2.0);
         //纬度差的正弦值
         var sinLatDis = Math.sin(latDistanse / 2.0);
         //两点距离
         var distanse = 2 * lyMapUtils.EARTH_RADIUS
-            * Math.asin(Math.sqrt(Math.pow(sinLatDis, 2) + Math.cos(radLatA) * Math.cos(radLatB) * Math.pow(sinLonDis, 2)));
+            * Math.asin(Math.sqrt(Math.pow(sinLatDis, 2) + Math.cos(radLatA) * Math.cos(radLatB) * Math.pow(sinLngDis, 2)));
         return distanse;
     }
 
